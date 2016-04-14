@@ -12,7 +12,8 @@ API_KEY    = os.environ['CANVASDATA_API_KEY']
 API_SECRET = os.environ['CANVASDATA_API_SECRET']
 
 BASE_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'test_dir')
-DATA_BASE_DIR = os.path.join(BASE_DIR)
+#DATA_BASE_DIR = os.path.join(BASE_DIR)
+DATA_BASE_DIR = BASE_DIR
 
 class TestingCanvasData(TestCase):
 
