@@ -1,6 +1,8 @@
 CanvasData Utilities
 =======================
 
+.. image:: https://travis-ci.org/kajigga/py_canvas_data.svg
+
 Full documentation 
 
 This python module is designed to make it easy to access Canvas Data files.
