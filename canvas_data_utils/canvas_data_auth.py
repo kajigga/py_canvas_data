@@ -3,10 +3,6 @@
 import hashlib, dateutil.parser, base64, hmac
 import requests, os, sys, json
 import csv, gzip, re,  glob
-try:
-  import ConfigParser
-except ImportError:
-  import configparser as ConfigParser
 
 import sqlalchemy
 from sqlalchemy import create_engine
@@ -15,8 +11,12 @@ from sqlalchemy.dialects import postgresql, mysql, sqlite
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.automap import automap_base
 from datetime import datetime
-from pprint import pprint
 from tabulate import tabulate
+
+try:
+  import ConfigParser
+except ImportError:
+  import configparser as ConfigParser
 
 try:
   from urllib import urlencode
@@ -110,7 +110,7 @@ class CanvasData(object):
           'data_folder':kwargs.get('data_folder')
         }
     }
-    self._config = ConfigParser.SafeConfigParser()
+    self._config = ConfigParser.SafeConfigParser(os.env)
     if kwargs.get('config_filename'):
       self.parse_config_file(kwargs.get('config_filename'))
       if self._config.get('database','connection_string'):
@@ -126,7 +126,7 @@ class CanvasData(object):
 
   def config_valid(self, config_filename):
     problems = []
-    config = ConfigParser.ConfigParser()
+    config = ConfigParser.ConfigParser(os.env)
     if not os.path.exists(config_filename):
       problems.append('conf file {} does not exist'.format(config_filename))
     else:
@@ -447,7 +447,6 @@ class CanvasData(object):
       if c['type'] in ('date', 'datetime', 'timestamp'):
         field_value = getattr(obj, c['name'], None)
         if field_value:
-          #print('field_value', c['name'], 'value', field_value)
           try:
             new_date = dateutil.parser.parse(field_value)
             setattr(obj, c['name'], new_date)
@@ -507,8 +506,6 @@ class CanvasData(object):
       results = results.json()
       for res in results.get('history',[]):
         dumpId = res['dumpId']
-        #print('='*50)
-        #pprint(res)
         if res['partial'] == False:
           last_full = True
           last_full_sequence = res['sequence']

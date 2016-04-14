@@ -1,6 +1,8 @@
 CanvasData Utilities
 =======================
 
+Full documentation 
+
 This python module is designed to make it easy to access Canvas Data files.
 
 Currently, this module makes it possible to:
