@@ -1,0 +1,35 @@
+
+Known Issues
+=============
+course_ui_canvas_navigation_dim is defined in the schema but no corresponding
+files are generated for download
+
+
+The following tables are defined in the schema but the table name does not match the name of the downloaded file.
+
+account
+filename_pattern=account_dim*
+
+course
+filename_pattern=course_dim*
+
+course_section
+filename_pattern=course_section_dim*
+
+enrollment_rollup
+filename_pattern=enrollment_rollup_dim*
+
+enrollment_term
+filename_pattern=enrollment_term_dim*
+
+user
+filename_pattern=user_dim*
+
+conversation
+filename_pattern=conversation_dim*
+
+conversation_message
+filename_pattern=conversation_message_dim*
+
+conversation_message_participant
+filename_pattern=conversation_message_participant_fact*
