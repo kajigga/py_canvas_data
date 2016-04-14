@@ -38,6 +38,7 @@ class TestingCanvasData(TestCase):
 
   def test_create_tables(self):
     db_filename = os.path.join(BASE_DIR,'testfile3.db')
+    print('db_filename: {}'.format(db_filename))
     self.cd.create_tables('sqlite:///{}'.format(db_filename))
 
     # file should exist
