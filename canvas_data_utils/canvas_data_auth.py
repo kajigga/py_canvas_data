@@ -110,7 +110,7 @@ class CanvasData(object):
           'data_folder':kwargs.get('data_folder')
         }
     }
-    self._config = ConfigParser.SafeConfigParser(os.env)
+    self._config = ConfigParser.SafeConfigParser(os.environ)
     if kwargs.get('config_filename'):
       self.parse_config_file(kwargs.get('config_filename'))
       if self._config.get('database','connection_string'):
@@ -126,7 +126,7 @@ class CanvasData(object):
 
   def config_valid(self, config_filename):
     problems = []
-    config = ConfigParser.ConfigParser(os.env)
+    config = ConfigParser.ConfigParser(os.environ)
     if not os.path.exists(config_filename):
       problems.append('conf file {} does not exist'.format(config_filename))
     else:
