@@ -31,8 +31,7 @@ tablename_pattern = re.compile('([a-z_]+)')
 
 # This dictionary represents the required configuration options
 required_sections = {
-    'security':('API_SECRET','API_KEY'),
-    'folders':('base_folder','data_folder')
+  'config':('API_SECRET','API_KEY','base_folder','data_folder')
 }
 
 CANVAS_DATA_AUTH_SCHEME_TMPL = '''GET
@@ -67,18 +66,18 @@ DIM_TABLES_WITH_COMPOSITE_KEY = {
 
 # Maps the column type from the CanvasData type to an SQLAlchemy type
 COLUMN_TYPE_MAPPING = {
-  u'bigint': BIGINT,
-  u'boolean': Boolean,
-  u'date': DATE,
-  u'datetime': DATETIME,
-  u'double precision': FLOAT,
-  u'int': Integer,
-  u'integer': Integer,
-  u'text': TEXT(convert_unicode=True),
-  u'timestamp': TIMESTAMP,
-  u'varchar': String(256, convert_unicode=True),
-  u'guid': String(256, convert_unicode=True),
-  u'enum': String(256, convert_unicode=True)
+  'bigint': BIGINT,
+  'boolean': Boolean,
+  'date': DATE,
+  'datetime': DATETIME,
+  'double precision': FLOAT,
+  'int': Integer,
+  'integer': Integer,
+  'text': TEXT(convert_unicode=True),
+  'timestamp': TIMESTAMP,
+  'varchar': String(256, convert_unicode=True),
+  'guid': String(256, convert_unicode=True),
+  'enum': String(256, convert_unicode=True)
 }
 
 # Used to map a dialect string to an SQLAlchemy dialect object
@@ -101,21 +100,21 @@ class CanvasData(object):
     self._imported_files = None
     self.offline = kwargs.get('offline', False)
     config_defaults = {
-        'security':{
+        'config':{
           'API_SECRET':kwargs.get('API_SECRET',''), 
-          'API_KEY':kwargs.get('API_KEY','')
-        },
-        'folders':{
+          'API_KEY':kwargs.get('API_KEY',''),
           'base_folder':kwargs.get('base_folder'),
           'data_folder':kwargs.get('data_folder')
         }
     }
+    config_filename = kwargs.get('config_filename')
     self._config = ConfigParser.SafeConfigParser(os.environ)
-    if kwargs.get('config_filename'):
-      self.parse_config_file(kwargs.get('config_filename'))
-      if self._config.get('database','connection_string'):
-        self.set_connection(self._config.get('database','connection_string'))
+    if config_filename and os.path.exists(config_filename):
+      self.parse_config_file(config_filename)
+      if self._config.get('config','connection_string'):
+        self.set_connection(self._config.get('config','connection_string'))
     else:
+      logger.info(config_filename, "does not exist")
       self.set_config_defaults(config_defaults)
 
   def set_config_defaults(self, defaults):
@@ -126,10 +125,10 @@ class CanvasData(object):
 
   def config_valid(self, config_filename):
     problems = []
-    config = ConfigParser.ConfigParser(os.environ)
     if not os.path.exists(config_filename):
       problems.append('conf file {} does not exist'.format(config_filename))
     else:
+      config = ConfigParser.SafeConfigParser(os.environ)
       config.read(config_filename)
       for rs in required_sections:
         if not config.has_section(rs):
@@ -137,30 +136,32 @@ class CanvasData(object):
         for option in required_sections[rs]:
           if not config.has_option(rs,option):
             problems.append('missing option {} in section {}'.format(option, rs))
-      #self._config = config
     return config, len(problems)<1, problems
 
   def parse_config_file(self, config_filename):
     config, is_valid, problems = self.config_valid(config_filename)
     if is_valid:
       self._config = config
+    else:
+      print('config problems')
+      print(problems)
     return self._config
 
   @property
   def API_SECRET(self):
-    return self._config.get('security', 'API_SECRET')
+    return self._config.get('config', 'API_SECRET')
 
   @property
   def API_KEY(self):
-    return self._config.get('security', 'API_KEY')
+    return self._config.get('config', 'API_KEY')
 
   @property
   def base_folder(self):
-    return self._config.get('folders', 'base_folder')
+    return self._config.get('config', 'base_folder')
 
   @property
   def data_folder(self):
-    return self._config.get('folders', 'data_folder')
+    return self._config.get('config', 'data_folder')
 
   def buildRequest(self,path,**kwargs):
     _date = datetime.utcnow().strftime('%a, %d %b %y %H:%M:%S GMT')

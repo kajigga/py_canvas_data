@@ -38,7 +38,6 @@ class TestingCanvasData(TestCase):
 
   def test_create_tables(self):
     db_filename = os.path.join(BASE_DIR,'testfile3.db')
-    print('db_filename: {}'.format(db_filename))
     self.cd.create_tables('sqlite:///{}'.format(db_filename))
 
     # file should exist
@@ -89,222 +88,13 @@ class TestingImports(TestCase):
     self.cd.import_data('assignment_dim')
     self.assertTrue('assignment_dim' in self.cd.table_list())
 
-  def test_import_assignment_fact(self):
-    self.cd.import_data('assignment_fact')
-    self.assertTrue('assignment_fact' in self.cd.table_list())
-
-  def test_import_assignment_group_dim(self):
-    self.cd.import_data('assignment_group_dim')
-    self.assertTrue('assignment_group_dim' in self.cd.table_list())
-
-  def test_import_assignment_group_fact(self):
-    self.cd.import_data('assignment_group_fact')
-    self.assertTrue('assignment_group_fact' in self.cd.table_list())
-
-  def test_import_assignment_group_rule_dim(self):
-    self.cd.import_data('assignment_group_rule_dim')
-    self.assertTrue('assignment_group_rule_dim' in self.cd.table_list())
-
-  def test_import_assignment_rule_dim(self):
-    self.cd.import_data('assignment_rule_dim')
-    self.assertTrue('assignment_rule_dim' in self.cd.table_list())
-
-  def test_import_communication_channel_dim(self):
-    self.cd.import_data('communication_channel_dim')
-    self.assertTrue('communication_channel_dim' in self.cd.table_list())
-
-  def test_import_communication_channel_fact(self):
-    self.cd.import_data('communication_channel_fact')
-    self.assertTrue('communication_channel_fact' in self.cd.table_list())
-
-  def test_import_conversation(self):
-    self.cd.import_data('conversation')
-    self.assertTrue('conversation' in self.cd.table_list())
-
-  def test_import_conversation_message(self):
-    self.cd.import_data('conversation_message')
-    self.assertTrue('conversation_message' in self.cd.table_list())
-
-  def test_import_conversation_message_participant(self):
-    self.cd.import_data('conversation_message_participant')
-    self.assertTrue('conversation_message_participant' in self.cd.table_list())
-
-  def test_import_course(self):
-    self.cd.import_data('course')
-    self.assertTrue('course' in self.cd.table_list())
-
-  def test_import_course_section(self):
-    self.cd.import_data('course_section')
-    self.assertTrue('course_section' in self.cd.table_list())
-
-  def test_import_course_ui_navigation_item_dim(self):
-    self.cd.import_data('course_ui_navigation_item_dim')
-    self.assertTrue('course_ui_navigation_item_dim' in self.cd.table_list())
-
-  def test_import_course_ui_navigation_item_fact(self):
-    self.cd.import_data('course_ui_navigation_item_fact')
-    self.assertTrue('course_ui_navigation_item_fact' in self.cd.table_list())
-
-  def test_import_discussion_entry_dim(self):
-    self.cd.import_data('discussion_entry_dim')
-    self.assertTrue('discussion_entry_dim' in self.cd.table_list())
-
-  def test_import_discussion_entry_fact(self):
-    self.cd.import_data('discussion_entry_fact')
-    self.assertTrue('discussion_entry_fact' in self.cd.table_list())
-
-  def test_import_discussion_topic_dim(self):
-    self.cd.import_data('discussion_topic_dim')
-    self.assertTrue('discussion_topic_dim' in self.cd.table_list())
-
-  def test_import_discussion_topic_fact(self):
-    self.cd.import_data('discussion_topic_fact')
-    self.assertTrue('discussion_topic_fact' in self.cd.table_list())
-
-  def test_import_enrollment_dim(self):
-    self.cd.import_data('enrollment_dim')
-    self.assertTrue('enrollment_dim' in self.cd.table_list())
-
-  def test_import_enrollment_fact(self):
-    self.cd.import_data('enrollment_fact')
-    self.assertTrue('enrollment_fact' in self.cd.table_list())
-
-  def test_import_enrollment_rollup(self):
-    self.cd.import_data('enrollment_rollup')
-    self.assertTrue('enrollment_rollup' in self.cd.table_list())
-
-  def test_import_enrollment_term(self):
-    self.cd.import_data('enrollment_term')
-    self.assertTrue('enrollment_term' in self.cd.table_list())
-
-  def test_import_external_tool_activation_dim(self):
-    self.cd.import_data('external_tool_activation_dim')
-    self.assertTrue('external_tool_activation_dim' in self.cd.table_list())
-
   def test_import_external_tool_activation_fact(self):
     self.cd.import_data('external_tool_activation_fact')
     self.assertTrue('external_tool_activation_fact' in self.cd.table_list())
 
-  def test_import_group_dim(self):
-    self.cd.import_data('group_dim')
-    self.assertTrue('group_dim' in self.cd.table_list())
-
-  def test_import_group_fact(self):
-    self.cd.import_data('group_fact')
-    self.assertTrue('group_fact' in self.cd.table_list())
-
-  def test_import_group_membership_fact(self):
-    self.cd.import_data('group_membership_fact')
-    self.assertTrue('group_membership_fact' in self.cd.table_list())
-
-  def test_import_pseudonym_dim(self):
-    self.cd.import_data('pseudonym_dim')
-    self.assertTrue('pseudonym_dim' in self.cd.table_list())
-
-  def test_import_pseudonym_fact(self):
-    self.cd.import_data('pseudonym_fact')
-    self.assertTrue('pseudonym_fact' in self.cd.table_list())
-
-  def test_import_quiz_dim(self):
-    self.cd.import_data('quiz_dim')
-    self.assertTrue('quiz_dim' in self.cd.table_list())
-
-  def test_import_quiz_fact(self):
-    self.cd.import_data('quiz_fact')
-    self.assertTrue('quiz_fact' in self.cd.table_list())
-
-  def test_import_quiz_question_answer_dim(self):
-    self.cd.import_data('quiz_question_answer_dim')
-    self.assertTrue('quiz_question_answer_dim' in self.cd.table_list())
-
-  def test_import_quiz_question_answer_fact(self):
-    self.cd.import_data('quiz_question_answer_fact')
-    self.assertTrue('quiz_question_answer_fact' in self.cd.table_list())
-
-  def test_import_quiz_question_dim(self):
-    self.cd.import_data('quiz_question_dim')
-    self.assertTrue('quiz_question_dim' in self.cd.table_list())
-
-  def test_import_quiz_question_fact(self):
-    self.cd.import_data('quiz_question_fact')
-    self.assertTrue('quiz_question_fact' in self.cd.table_list())
-
-  def test_import_quiz_question_group_dim(self):
-    self.cd.import_data('quiz_question_group_dim')
-    self.assertTrue('quiz_question_group_dim' in self.cd.table_list())
-
-  def test_import_quiz_question_group_fact(self):
-    self.cd.import_data('quiz_question_group_fact')
-    self.assertTrue('quiz_question_group_fact' in self.cd.table_list())
-
-  def test_import_quiz_submission_dim(self):
-    self.cd.import_data('quiz_submission_dim')
-    self.assertTrue('quiz_submission_dim' in self.cd.table_list())
-
-  def test_import_quiz_submission_fact(self):
-    self.cd.import_data('quiz_submission_fact')
-    self.assertTrue('quiz_submission_fact' in self.cd.table_list())
-
-  def test_import_quiz_submission_historical_dim(self):
-    self.cd.import_data('quiz_submission_historical_dim')
-    self.assertTrue('quiz_submission_historical_dim' in self.cd.table_list())
-
-  def test_import_quiz_submission_historical_fact(self):
-    self.cd.import_data('quiz_submission_historical_fact')
-    self.assertTrue('quiz_submission_historical_fact' in self.cd.table_list())
-
-  def test_import_requests(self):
-    self.cd.import_data('requests')
-    self.assertTrue('requests' in self.cd.table_list())
-
   def test_import_role_dim(self):
     self.cd.import_data('role_dim')
     self.assertTrue('role_dim' in self.cd.table_list())
-
-  def test_import_submission_comment_dim(self):
-    self.cd.import_data('submission_comment_dim')
-    self.assertTrue('submission_comment_dim' in self.cd.table_list())
-
-  def test_import_submission_comment_fact(self):
-    self.cd.import_data('submission_comment_fact')
-    self.assertTrue('submission_comment_fact' in self.cd.table_list())
-
-  def test_import_submission_comment_participant_dim(self):
-    self.cd.import_data('submission_comment_participant_dim')
-    self.assertTrue('submission_comment_participant_dim' in self.cd.table_list())
-
-  def test_import_submission_comment_participant_fact(self):
-    self.cd.import_data('submission_comment_participant_fact')
-    self.assertTrue('submission_comment_participant_fact' in self.cd.table_list())
-
-  def test_import_submission_dim(self):
-    self.cd.import_data('submission_dim')
-    self.assertTrue('submission_dim' in self.cd.table_list())
-
-  def test_import_submission_fact(self):
-    self.cd.import_data('submission_fact')
-    self.assertTrue('submission_fact' in self.cd.table_list())
-
-  def test_import_user(self):
-    self.cd.import_data('user')
-    self.assertTrue('user' in self.cd.table_list())
-
-  def test_import_wiki_dim(self):
-    self.cd.import_data('wiki_dim')
-    self.assertTrue('wiki_dim' in self.cd.table_list())
-
-  def test_import_wiki_fact(self):
-    self.cd.import_data('wiki_fact')
-    self.assertTrue('wiki_fact' in self.cd.table_list())
-
-  def test_import_wiki_page_dim(self):
-    self.cd.import_data('wiki_page_dim')
-    self.assertTrue('wiki_page_dim' in self.cd.table_list())
-
-  def test_importwiki_page_fact(self):
-    self.cd.import_data('wiki_page_fact')
-    self.assertTrue('wiki_page_fact' in self.cd.table_list())
-
 
 
 class TestReadConfig(TestCase):
@@ -316,8 +106,9 @@ class TestReadConfig(TestCase):
   def test_read_valid_config_file(self):
     config_filename = os.path.join(BASE_DIR, 'config.ini') 
     self.assertTrue(os.path.exists(config_filename))
-    conf, valid = self.cd.config_valid(config_filename)
+    conf, valid, errors = self.cd.config_valid(config_filename)
     self.assertTrue(valid)
+    self.assertEqual([], errors)
 
 
   def test_read_config_options(self):
@@ -334,8 +125,9 @@ class TestReadConfig(TestCase):
   def test_read_invalid_config_file(self):
     config_filename = os.path.join(BASE_DIR, 'config_invalid.ini') 
     self.assertTrue(os.path.exists(config_filename))
-    config,valid = self.cd.config_valid(config_filename)
+    config, valid, errors = self.cd.config_valid(config_filename)
     self.assertFalse(valid)
+    self.assertNotEquals([], errors)
 
 class TestCLI(TestCase):
 
