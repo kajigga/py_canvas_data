@@ -13,7 +13,7 @@ API_KEY = '82c864690fe61af93e7d53eddee56161cee75cc0'
 API_SECRET = '4558d04f0af00c461bf1fbe787f10ba24dd3f5fe'
 
 BASE_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'test_dir')
-DATA_BASE_DIR = os.path.join(BASE_DIR,'test2')
+DATA_BASE_DIR = os.path.join(BASE_DIR)
 
 class TestingCanvasData(TestCase):
 
