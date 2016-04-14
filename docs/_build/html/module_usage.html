@@ -1,0 +1,203 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Using the module programatically &mdash; Canvas Data Utilities 0.0.1a documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.1a',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Canvas Data Utilities 0.0.1a documentation" href="index.html" />
+    <link rel="prev" title="Welcome to Canvas Data Utilities’s documentation!" href="index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <span class="target" id="module-canvas_data_utils"></span><div class="section" id="using-the-module-programatically">
+<h1>Using the module programatically<a class="headerlink" href="#using-the-module-programatically" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="canvas_data_utils.canvas_data_auth.CanvasData">
+<em class="property">class </em><code class="descclassname">canvas_data_utils.canvas_data_auth.</code><code class="descname">CanvasData</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#canvas_data_utils.canvas_data_auth.CanvasData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="canvas_data_utils.canvas_data_auth.CanvasData.clear_table">
+<code class="descname">clear_table</code><span class="sig-paren">(</span><em>schema_table</em><span class="sig-paren">)</span><a class="headerlink" href="#canvas_data_utils.canvas_data_auth.CanvasData.clear_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete all records from the table <cite>schema_table</cite></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="canvas_data_utils.canvas_data_auth.CanvasData.convert_all_to_csv">
+<code class="descname">convert_all_to_csv</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#canvas_data_utils.canvas_data_auth.CanvasData.convert_all_to_csv" title="Permalink to this definition">¶</a></dt>
+<dd><p>converts all files (downloading them first if necessary) to CSV</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="canvas_data_utils.canvas_data_auth.CanvasData.create_tables">
+<code class="descname">create_tables</code><span class="sig-paren">(</span><em>db_connect_string=None</em><span class="sig-paren">)</span><a class="headerlink" href="#canvas_data_utils.canvas_data_auth.CanvasData.create_tables" title="Permalink to this definition">¶</a></dt>
+<dd><p>creates all of the tables in the database</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="canvas_data_utils.canvas_data_auth.CanvasData.download_all_files">
+<code class="descname">download_all_files</code><span class="sig-paren">(</span><em>table=None</em><span class="sig-paren">)</span><a class="headerlink" href="#canvas_data_utils.canvas_data_auth.CanvasData.download_all_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download all of the files for a given table or, if no table is
+specified, download all files for all tables.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="canvas_data_utils.canvas_data_auth.CanvasData.download_single_file">
+<code class="descname">download_single_file</code><span class="sig-paren">(</span><em>file_url</em>, <em>filename</em><span class="sig-paren">)</span><a class="headerlink" href="#canvas_data_utils.canvas_data_auth.CanvasData.download_single_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download a single file given the file_url and the filename to give the
+file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="canvas_data_utils.canvas_data_auth.CanvasData.file_imported">
+<code class="descname">file_imported</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="headerlink" href="#canvas_data_utils.canvas_data_auth.CanvasData.file_imported" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns true if the file has been imported into the database. otherwise
+returns false</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="canvas_data_utils.canvas_data_auth.CanvasData.get_latest_download">
+<code class="descname">get_latest_download</code><span class="sig-paren">(</span><em>table</em><span class="sig-paren">)</span><a class="headerlink" href="#canvas_data_utils.canvas_data_auth.CanvasData.get_latest_download" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the latest downloaded file for a table</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="canvas_data_utils.canvas_data_auth.CanvasData.import_all_requests">
+<code class="descname">import_all_requests</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#canvas_data_utils.canvas_data_auth.CanvasData.import_all_requests" title="Permalink to this definition">¶</a></dt>
+<dd><p>imports all requests files. requests files are incremental. To get a
+full picture of web traffic in a given time period, you must import the
+requests file individually</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="canvas_data_utils.canvas_data_auth.CanvasData.import_data">
+<code class="descname">import_data</code><span class="sig-paren">(</span><em>schema_table=None</em>, <em>with_download=True</em><span class="sig-paren">)</span><a class="headerlink" href="#canvas_data_utils.canvas_data_auth.CanvasData.import_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>downloads and imports all tables unless schema_table is defined, in
+which case it only imports that table</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="canvas_data_utils.canvas_data_auth.CanvasData.import_file">
+<code class="descname">import_file</code><span class="sig-paren">(</span><em>schema_table</em>, <em>csv_filename</em><span class="sig-paren">)</span><a class="headerlink" href="#canvas_data_utils.canvas_data_auth.CanvasData.import_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>imports the table specified by schema_table with the data from
+csv_filename.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="canvas_data_utils.canvas_data_auth.CanvasData.latest_files">
+<code class="descname">latest_files</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#canvas_data_utils.canvas_data_auth.CanvasData.latest_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the latest downloadable file for a table</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="canvas_data_utils.canvas_data_auth.CanvasData.list_all_files">
+<code class="descname">list_all_files</code><span class="sig-paren">(</span><em>schema_table</em><span class="sig-paren">)</span><a class="headerlink" href="#canvas_data_utils.canvas_data_auth.CanvasData.list_all_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lists all files for a table</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="canvas_data_utils.canvas_data_auth.CanvasData.normalize_values_for_db">
+<code class="descname">normalize_values_for_db</code><span class="sig-paren">(</span><em>obj</em>, <em>schema_table</em><span class="sig-paren">)</span><a class="headerlink" href="#canvas_data_utils.canvas_data_auth.CanvasData.normalize_values_for_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>normalizes some of the data for the database. For example, many fields
+come across with N representing a null value. This method changes that to
+<cite>None</cite> so it imports correctly into the database.</p>
+<p>This method also ensures that floats are floats, integers are integers, 
+date fields have proper dates or are blank, etc.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="canvas_data_utils.canvas_data_auth.CanvasData.remove_caches">
+<code class="descname">remove_caches</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#canvas_data_utils.canvas_data_auth.CanvasData.remove_caches" title="Permalink to this definition">¶</a></dt>
+<dd><p>removes all cached data (schema, imported_files, etc) from the base
+folder</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="canvas_data_utils.canvas_data_auth.CanvasData.reset_database">
+<code class="descname">reset_database</code><span class="sig-paren">(</span><em>db_connect_string=None</em><span class="sig-paren">)</span><a class="headerlink" href="#canvas_data_utils.canvas_data_auth.CanvasData.reset_database" title="Permalink to this definition">¶</a></dt>
+<dd><p>resets the database by dropping all known tables then recreating them.
+This method does _not_ import data.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to Canvas Data Utilities&#8217;s documentation!</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/module_usage.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Kajigga Dev.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="_sources/module_usage.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

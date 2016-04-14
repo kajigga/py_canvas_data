@@ -2,7 +2,12 @@
 # -*- coding: utf-8 -*-
 import hashlib, dateutil.parser, base64, hmac
 import requests, os, sys, json
-import csv, gzip, re, ConfigParser, glob
+import csv, gzip, re,  glob
+try:
+  import ConfigParser
+except ImportError:
+  import configparser as ConfigParser
+
 import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy import Table, Column, Integer, String, MetaData, Boolean, DATE, DATETIME, FLOAT, BigInteger, BIGINT, TIMESTAMP, TEXT, ForeignKey
@@ -19,7 +24,7 @@ except:
   # For Python 3
   from urllib.parse import urlencode
 
-from logger import logger
+from canvas_data_utils.logger import logger
 
 # This pattern is used to recognize table names in the downloaded files
 tablename_pattern = re.compile('([a-z_]+)')
@@ -114,13 +119,9 @@ class CanvasData(object):
       self.set_config_defaults(config_defaults)
 
   def set_config_defaults(self, defaults):
-    #print 'setting defaults'
     for k in defaults.keys():
       self._config.add_section(k)
-      #print 'k',k
       for o in defaults[k].keys():
-        #print 'o',o
-        #print 'value',defaults[k][o]
         self._config.set(k, o, defaults[k][o])
 
   def config_valid(self, config_filename):
@@ -190,11 +191,6 @@ class CanvasData(object):
     path = '/api/schema/latest'
     signature,_date,headers = self.buildRequest(path)
     url = 'https://api.inshosteddata.com{}'.format(path)
-    #url = 'http://requestb.in/1myx0oj1?{}'.format(path)
-    print 'signature', signature
-    print 'headers', headers
-    print 'url', url
-    print 'date', _date
     schema = requests.get(url,headers=headers).json()
     return schema
 
@@ -274,9 +270,7 @@ class CanvasData(object):
         for col in schema_element['columns']:
           desc = col.get('description','')[:30]
           rows.append([col['name'], col['type'], col.get('dimension'), desc])
-        #output.append(tabulate(rows, headers))
         tabs = tabulate(rows, headers)
-        #print 'type(tabs)', type(tabs)
         output.append(tabs)
     if print_output:
       print('\n'.join(output))
@@ -293,13 +287,13 @@ class CanvasData(object):
       try:
         for h in query.column_descriptions:
           headers.append(h['name'])
-      except Exception, err:
+      except Exception as err:
         # Must be a raw ResultProxy
         headers = query.keys()
 
     try:
       rows = query.all()
-    except Exception, err:
+    except Exception as err:
       # Must be a raw ResultProxy
       rows = query.fetchall()
 
@@ -521,7 +515,6 @@ class CanvasData(object):
           last_full_dump_id = res['dumpId']
           break
         for fileinfo in res['files']:
-          #print 'fileinfo', fileinfo
           fileinfo['filename'] = os.path.join(self.data_folder,fileinfo['filename'])
           files_list.append(fileinfo)
         if res['sequence'] <=1:
@@ -565,7 +558,7 @@ class CanvasData(object):
       self.imported_files.add(os.path.basename(csv_filename))
       logger.debug('{} records successfully imported into {}'.format(len(records),schema_table))
       self.save_imported_files()
-    except sqlalchemy.exc.IntegrityError, err:
+    except sqlalchemy.exc.IntegrityError as err:
       pass
 
     

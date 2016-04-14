@@ -1,0 +1,214 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>CanvasData Utilities &mdash; Canvas Data Utilities 0.0.1a documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.1a',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Canvas Data Utilities 0.0.1a documentation" href="index.html" />
+    <link rel="next" title="Using the module programatically" href="module_usage.html" />
+    <link rel="prev" title="Welcome to Canvas Data Utilities’s documentation!" href="index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="canvasdata-utilities">
+<h1>CanvasData Utilities<a class="headerlink" href="#canvasdata-utilities" title="Permalink to this headline">¶</a></h1>
+<p>This python module is designed to make it easy to access Canvas Data files.</p>
+<p>Currently, this module makes it possible to:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Convert downloaded Canvas Data files to CSV files with headers</li>
+<li>export SQL table creation statements</li>
+<li>list files for a table</li>
+<li>download all files or files for a specific table</li>
+<li>view the Canvas Data schema (fields, field types, etc)</li>
+<li>connect to a database (uses sqlalchemy) to create tables, import data, run SQL queries</li>
+</ul>
+</div></blockquote>
+<hr class="docutils" />
+<div class="section" id="module-usage">
+<h2>Module Usage<a class="headerlink" href="#module-usage" title="Permalink to this headline">¶</a></h2>
+<p>This module can be used programatically in other scripts and software. An
+example of creating a canvas_data object is found below.:</p>
+<div class="highlight-default"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">canvas_data_utils.canvas_data_auth</span> <span class="k">import</span> <span class="n">CanvasData</span>
+
+<span class="n">canvas_data_object</span> <span class="o">=</span> <span class="n">CanvasData</span><span class="p">(</span>
+    <span class="n">API_KEY</span><span class="o">=</span><span class="n">YOUR_API_KEY</span> <span class="p">,</span>
+    <span class="n">API_SECRET</span><span class="o">=</span><span class="n">YOUR_API_SECRET</span><span class="p">,</span>
+    <span class="n">base_folder</span> <span class="o">=</span> <span class="n">YOUR_BASE_DIR</span><span class="p">,</span>
+    <span class="n">data_folder</span> <span class="o">=</span> <span class="n">YOUR_DATA_DIR</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Once you have that object created, you can...</p>
+<p>generate mysql table creation statements</p>
+<div class="highlight-default"><div class="highlight"><pre><span class="n">mysql_table_creation_statement</span> <span class="o">=</span> <span class="n">canvas_data_object</span><span class="o">.</span><span class="n">table_creation_statement</span><span class="p">(</span><span class="s">&#39;mysql&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>generate sqlite table creation statements</p>
+<div class="highlight-default"><div class="highlight"><pre><span class="n">sqlite_table_creation_statement</span> <span class="o">=</span> <span class="n">canvas_data_object</span><span class="o">.</span><span class="n">table_creation_statement</span><span class="p">(</span><span class="s">&#39;sqlite&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>generate postgres table creation statements</p>
+<div class="highlight-default"><div class="highlight"><pre><span class="n">postgres_table_creation_statement</span> <span class="o">=</span> <span class="n">canvas_data_object</span><span class="o">.</span><span class="n">table_creation_statement</span><span class="p">(</span><span class="s">&#39;postgres&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>create tables in a database given by a connection string</p>
+<div class="highlight-default"><div class="highlight"><pre><span class="n">canvas_data_object</span><span class="o">.</span><span class="n">create_tables</span><span class="p">(</span><span class="s">&#39;sqlite:///{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">db_filename</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>fetch the current schema (as json)</p>
+<div class="highlight-default"><div class="highlight"><pre><span class="n">schema</span> <span class="o">=</span> <span class="n">canvas_data_object</span><span class="o">.</span><span class="n">fetch_schema</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>get a list of columns in a table</p>
+<div class="highlight-default"><div class="highlight"><pre><span class="n">user_dim_columns</span> <span class="o">=</span> <span class="n">canvas_data_object</span><span class="o">.</span><span class="n">get_schema_columns</span><span class="p">(</span> <span class="s">&#39;user_dim&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>convert an text file download from TSV (Tab Separated Values) to CSV</p>
+<div class="highlight-default"><div class="highlight"><pre><span class="n">canvas_data_object</span><span class="o">.</span><span class="n">convert_tsv_to_csv</span><span class="p">(</span><span class="n">tsv_filepath</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>list all the tables in the schema</p>
+<div class="highlight-default"><div class="highlight"><pre><span class="n">table_list</span> <span class="o">=</span> <span class="n">canvas_data_object</span><span class="o">.</span><span class="n">table_list</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>download and convert all files to CSV</p>
+<div class="highlight-default"><div class="highlight"><pre><span class="n">canvas_data_object</span><span class="o">.</span><span class="n">convert_all_to_csv</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>list all downloadable files for a table</p>
+<div class="highlight-default"><div class="highlight"><pre><span class="n">file_list</span> <span class="o">=</span> <span class="n">canvas_data_object</span><span class="o">.</span><span class="n">list_all_files</span><span class="p">(</span><span class="s">&#39;user_dim&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="config-file">
+<h2>Config File<a class="headerlink" href="#config-file" title="Permalink to this headline">¶</a></h2>
+<p>You need to create a config file somewhere. This config file is a typical .INI
+file. It should look something like the following example.</p>
+<div class="highlight-default"><div class="highlight"><pre><span class="p">[</span><span class="n">security</span><span class="p">]</span>
+<span class="n">API_SECRET</span> <span class="o">=</span> <span class="n">replace_with_api_secret_from_canvas_data</span>
+<span class="n">API_KEY</span> <span class="o">=</span> <span class="n">replace_with_api_key_from_canvas_data</span>
+
+<span class="p">[</span><span class="n">folders</span><span class="p">]</span>
+<span class="n">base_folder</span> <span class="o">=</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">base</span><span class="o">/</span><span class="n">folder</span><span class="o">/</span><span class="k">for</span><span class="o">/</span><span class="n">downloads</span><span class="o">/</span>
+<span class="n">data_folder</span> <span class="o">=</span> <span class="o">%</span><span class="p">(</span><span class="n">base_folder</span><span class="p">)</span><span class="n">s</span><span class="o">/</span><span class="n">test2</span>
+
+<span class="p">[</span><span class="n">database</span><span class="p">]</span>
+<span class="n">connection_string</span> <span class="o">=</span> <span class="n">sqlite</span><span class="p">:</span><span class="o">///%</span><span class="p">(</span><span class="n">base_folder</span><span class="p">)</span><span class="n">s</span><span class="o">/</span><span class="n">sample</span><span class="o">.</span><span class="n">db</span>
+</pre></div>
+</div>
+<p>Note: The connection_string configuration follows the connection pattern needed
+by SQLAlchemy at <a class="reference external" href="http://docs.sqlalchemy.org/en/rel_1_0/core/engines.html">http://docs.sqlalchemy.org/en/rel_1_0/core/engines.html</a>.</p>
+<p>This library supports any database type than SQLAlchemy does.</p>
+</div>
+<hr class="docutils" />
+<div class="section" id="command-line-tool">
+<h2>Command-line Tool<a class="headerlink" href="#command-line-tool" title="Permalink to this headline">¶</a></h2>
+<p>This library includes a command line utility called <cite>canvasdata</cite>.</p>
+</div>
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default"><div class="highlight"><pre><span class="n">canvasdata</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">config</span> <span class="n">CONFIG</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">t</span> <span class="n">TABLE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">offline</span> <span class="n">OFFLINE</span><span class="p">]</span>
+                <span class="p">{</span><span class="n">convert_to_csv</span><span class="p">,</span><span class="n">import</span><span class="p">,</span><span class="n">create_tables</span><span class="p">,</span><span class="n">reset</span><span class="p">,</span><span class="n">sql_create_statement</span><span class="p">,</span><span class="n">list_files</span><span class="p">,</span><span class="n">download</span><span class="p">,</span><span class="n">sample_queries</span><span class="p">,</span><span class="n">schema</span><span class="p">}</span>
+
+<span class="n">optional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
+  <span class="o">--</span><span class="n">config</span> <span class="n">CONFIG</span>       <span class="n">path</span> <span class="n">to</span> <span class="n">the</span> <span class="n">configuration</span> <span class="n">file</span>
+  <span class="o">-</span><span class="n">t</span> <span class="n">TABLE</span>              <span class="n">specify</span> <span class="n">a</span> <span class="n">specific</span> <span class="n">table</span>
+  <span class="o">--</span><span class="n">offline</span> <span class="n">OFFLINE</span>     <span class="n">run</span> <span class="ow">in</span> <span class="n">offline</span> <span class="n">mode</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">CanvasData Utilities</a><ul>
+<li><a class="reference internal" href="#module-usage">Module Usage</a></li>
+<li><a class="reference internal" href="#config-file">Config File</a></li>
+<li><a class="reference internal" href="#command-line-tool">Command-line Tool</a></li>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to Canvas Data Utilities&#8217;s documentation!</a></li>
+      <li>Next: <a href="module_usage.html" title="next chapter">Using the module programatically</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/README.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Kajigga Dev.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="_sources/README.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
