@@ -102,8 +102,8 @@ class CanvasData(object):
     self.offline = kwargs.get('offline', False)
     config_defaults = {
         'security':{
-          'API_SECRET':kwargs.get('API_SECRET'), 
-          'API_KEY':kwargs.get('API_KEY')
+          'API_SECRET':kwargs.get('API_SECRET',''), 
+          'API_KEY':kwargs.get('API_KEY','')
         },
         'folders':{
           'base_folder':kwargs.get('base_folder'),
@@ -164,6 +164,7 @@ class CanvasData(object):
 
   def buildRequest(self,path,**kwargs):
     _date = datetime.utcnow().strftime('%a, %d %b %y %H:%M:%S GMT')
+    print('_date', _date)
     return self._buildRequest(path, _date, **kwargs)
 
   def build_schema_header(self, path, _date, **kwargs):

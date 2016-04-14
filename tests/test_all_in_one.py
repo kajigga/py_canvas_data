@@ -8,8 +8,8 @@ import subprocess
 
 from canvas_data_utils.canvas_data_auth import CanvasData, required_sections
 
-API_KEY    = os.environ.get('CANVASDATA_API_KEY')
-API_SECRET = os.environ.get('CANVASDATA_API_SECRET')
+API_KEY    = os.environ['CANVASDATA_API_KEY']
+API_SECRET = os.environ['CANVASDATA_API_SECRET']
 
 BASE_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'test_dir')
 DATA_BASE_DIR = os.path.join(BASE_DIR,'test2')
