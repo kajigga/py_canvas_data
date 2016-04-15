@@ -3,6 +3,7 @@
 from unittest import TestCase
 from pprint import pprint
 import os, time, glob
+import requests
 
 import subprocess
 
@@ -42,8 +43,6 @@ class TestingCanvasData(TestCase):
     print('signature', signature)
     assert _date_returned == _date
     assert headers == good_headers
-    requests.get('http://requestb.in/1myx0oj1?{}'.format(path), header=headers)
-    assert False
   
   #def test_get_schema2(self):
   #  self.cd.schema

@@ -621,7 +621,7 @@ class CanvasData(object):
     #return table
     return getattr(self.base.classes,schema_table)
 
-  def get_latest_download(self,table):
+  def get_latest_download(self, table):
     '''returns the latest downloaded file for a table'''
     file_list = self.latest_files()
     if sys.version_info.major == 2:
@@ -631,6 +631,7 @@ class CanvasData(object):
 
     for key,artifact in _iter:
       filename = os.path.join(self.data_folder,artifact['files'][0]['filename'])
+      #print(','.join(('schema name',self.get_schema_name(filename),'filename',filename)))
       if self.get_schema_name(filename) == table and os.path.exists(filename):
         return filename
 

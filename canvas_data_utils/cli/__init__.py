@@ -35,7 +35,12 @@ def canvasdata():
   cdata = canvas_data_auth.CanvasData(config_filename = config, offline=args.offline)
   if args.command == 'convert_to_csv':
     print('Converting *.gz files to CSV')
-    csv_filename = cdata.convert_all_to_csv()
+    if not args.table:
+      csv_filename = cdata.convert_all_to_csv()
+    else:
+      filename = cdata.get_latest_download(args.table)
+      csv_filename = cdata.convert_tsv_to_csv(filename)
+
 
   elif args.command == 'create_tables':
     cdata.create_tables()

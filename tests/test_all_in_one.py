@@ -130,12 +130,26 @@ class TestReadConfig(TestCase):
     self.assertFalse(valid)
     self.assertNotEquals([], errors)
 
+
+def files_with_extension(folder, *extensions):
+  files = []
+
+  for ext in extensions:
+    files.extend(glob.glob(os.path.join(folder, '*.'+ext)))
+
+  return files
+
 class TestCLI(TestCase):
 
   def setUp(self):
     # Remove all *.csv files from the test2 folder
-    files = glob.glob(os.path.join(DATA_BASE_DIR,'*.csv'))
-    for f in files:
+    self.config_filename = os.path.join(BASE_DIR, 'config.ini') 
+    self.cd = CanvasData(config_filename=self.config_filename)
+    self.db_dir = self.cd._config.get('config','base_folder')
+
+  def tearDown(self):
+
+    for f in files_with_extension(self.cd.data_folder, 'csv', 'gz'):
       os.unlink(f)
 
   def test_cli_with_arguments_fails(self):
@@ -151,9 +165,13 @@ class TestCLI(TestCase):
     self.assertTrue('usage: canvasdata [-h] [--config CONFIG]' in script_output)
 
   def test_cli_convert_to_csv(self):
-    config_filename = os.path.join(BASE_DIR, 'config.ini') 
-    cmd = ['canvasdata','--config', config_filename, 'convert_to_csv']
-    self.assertEqual(glob.glob(os.path.join(DATA_BASE_DIR,'*.csv')),[])
+    cmd1 = ['canvasdata','--config', self.config_filename,'-t','user', 'download']
+    cmd2 = ['canvasdata','--config', self.config_filename,'-t','user', 'convert_to_csv']
 
-    script_output = subprocess.check_output(cmd)  
-    self.assertNotEqual(glob.glob(os.path.join(DATA_BASE_DIR,'*.csv')),[])
+
+    print("DATA_BASE_DIR: " + self.db_dir)
+    self.assertEqual(files_with_extension(self.cd.data_folder, 'csv'),[])
+
+    script_output = subprocess.check_output(cmd1)  
+    script_output = subprocess.check_output(cmd2)  
+    self.assertNotEqual(files_with_extension(self.cd.data_folder, 'csv'),[])
