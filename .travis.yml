@@ -8,6 +8,7 @@ python:
    
 # command to install dependencies
 install: 
+  - "mkdir -p $HOME/Download/cd_test"
   - "pip install -r requirements.txt"
   - "pip install -e ./"
   #
