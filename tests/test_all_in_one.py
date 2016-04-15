@@ -101,6 +101,7 @@ class TestingImports(TestCase):
 class TestReadConfig(TestCase):
   def setUp(self):
     config_filename = os.path.join(BASE_DIR, 'config.ini') 
+    print('config_filename', config_filename)
     self.cd = CanvasData(config_filename=config_filename)
         
 

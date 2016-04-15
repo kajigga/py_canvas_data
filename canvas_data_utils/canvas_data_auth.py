@@ -13,6 +13,9 @@ from sqlalchemy.ext.automap import automap_base
 from datetime import datetime
 from tabulate import tabulate
 
+import codecs
+reader = codecs.getreader('utf-8')
+
 try:
   import ConfigParser
 except ImportError:
@@ -108,13 +111,13 @@ class CanvasData(object):
         }
     }
     config_filename = kwargs.get('config_filename')
-    self._config = ConfigParser.SafeConfigParser(os.environ)
-    if config_filename and os.path.exists(config_filename):
-      self.parse_config_file(config_filename)
-      if self._config.get('config','connection_string'):
-        self.set_connection(self._config.get('config','connection_string'))
+    
+    config, is_valid, problems = self.config_valid(config_filename)
+    if is_valid:
+      self._config = config
+      self.set_connection(self._config.get('config','connection_string'))
     else:
-      logger.info(config_filename, "does not exist")
+      logger.info("{} does not exist".format(config_filename))
       self.set_config_defaults(config_defaults)
 
   def set_config_defaults(self, defaults):
@@ -128,7 +131,12 @@ class CanvasData(object):
     if not os.path.exists(config_filename):
       problems.append('conf file {} does not exist'.format(config_filename))
     else:
-      config = ConfigParser.SafeConfigParser(os.environ)
+      _defaults = {
+          'CANVASDATA_API_SECRET':os.environ.get('CANVASDATA_API_SECRET'),
+          'CANVASDATA_API_KEY':os.environ.get('CANVASDATA_API_KEY'),
+          'home':os.environ.get('HOME','')
+          }
+      config = ConfigParser.SafeConfigParser(_defaults)
       config.read(config_filename)
       for rs in required_sections:
         if not config.has_section(rs):
@@ -201,7 +209,7 @@ class CanvasData(object):
     if not self._schema:
       schema_filename = os.path.join(self.base_folder, 'schema.json')
       if os.path.exists(schema_filename) and self.time_diff(os.path.getmtime(schema_filename)) < 24:
-        self._schema = json.load(open(schema_filename,'rb'))
+        self._schema = json.load(reader(open(schema_filename,'rb')))
       else:
         self._schema = self.fetch_schema()
         json.dump(self._schema, open(schema_filename,'w+'), indent=2, separators=(',', ': '))
@@ -379,7 +387,7 @@ class CanvasData(object):
             if schema_table == 'requests':
               autoincrement=False
 
-          if col.get('dimension') and col['dimension'].has_key('role'):
+          if col.get('dimension') and 'role' in col['dimension']:
             if col['dimension']['role'] in self.table_list():
               foreign_key = '{role}.{id}'.format(**col['dimension'])
               column = Column(col['name'], col_type, ForeignKey(foreign_key), nullable=True)
@@ -591,7 +599,7 @@ class CanvasData(object):
     if self._imported_files == None:
       filename = os.path.join(self.base_folder,'imported_files.json')
       if os.path.exists(filename):
-        self._imported_files = json.load(open(filename,'rb'))
+        self._imported_files = json.load(reader(open(filename,'rb')))
       else:
         self._imported_files = []
       self._imported_files = set(self._imported_files)

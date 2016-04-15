@@ -6,4 +6,3 @@ Using the module programatically
   :members:
   :show-inheritance:
 '''
-import cli
