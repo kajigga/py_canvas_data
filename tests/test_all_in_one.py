@@ -163,7 +163,7 @@ class TestCLI(TestCase):
 
   def test_cli_displays_help(self):
     script_output = subprocess.check_output(['canvasdata','-h'], **{})  
-    self.assertTrue('usage: canvasdata [-h] [--config CONFIG]' in script_output)
+    self.assertTrue(b'usage: canvasdata [-h] [--config CONFIG]' in script_output)
 
   def test_cli_convert_to_csv(self):
     cmd1 = ['canvasdata','--config', self.config_filename,'-t','user', 'download']

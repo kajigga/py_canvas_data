@@ -112,13 +112,12 @@ class CanvasData(object):
     }
     config_filename = kwargs.get('config_filename')
     
-    config, is_valid, problems = self.config_valid(config_filename)
-    if is_valid:
-      self._config = config
-      self.set_connection(self._config.get('config','connection_string'))
-    else:
-      logger.info("{} does not exist".format(config_filename))
+    self._config, is_valid, problems = self.config_valid(config_filename)
+    if not config_filename or not is_valid:
+      #logger.info("{} does not exist".format(config_filename))
       self.set_config_defaults(config_defaults)
+    if is_valid:
+      self.set_connection(self._config.get('config','connection_string'))
 
   def set_config_defaults(self, defaults):
     for k in defaults.keys():
@@ -128,15 +127,15 @@ class CanvasData(object):
 
   def config_valid(self, config_filename):
     problems = []
-    if not os.path.exists(config_filename):
+    _defaults = {
+        'CANVASDATA_API_SECRET':os.environ.get('CANVASDATA_API_SECRET'),
+        'CANVASDATA_API_KEY':os.environ.get('CANVASDATA_API_KEY'),
+        'home':os.environ.get('HOME','')
+    }
+    config = ConfigParser.SafeConfigParser(_defaults)
+    if not config_filename or not os.path.exists(config_filename):
       problems.append('conf file {} does not exist'.format(config_filename))
     else:
-      _defaults = {
-          'CANVASDATA_API_SECRET':os.environ.get('CANVASDATA_API_SECRET'),
-          'CANVASDATA_API_KEY':os.environ.get('CANVASDATA_API_KEY'),
-          'home':os.environ.get('HOME','')
-          }
-      config = ConfigParser.SafeConfigParser(_defaults)
       config.read(config_filename)
       for rs in required_sections:
         if not config.has_section(rs):
@@ -185,15 +184,22 @@ class CanvasData(object):
 
   def _buildRequest(self, path, _date, **kwargs):
     s = self.build_schema_header(path, _date)
+    _secret = self.API_SECRET
+    if sys.version_info >= (3,0):
+      s = bytes(s, 'utf-8')
+      _secret = bytes(self.API_SECRET, 'utf-8')
     signature = base64.b64encode( 
         hmac.new(
-          self.API_SECRET, 
+          _secret, 
           msg=s, 
           digestmod=hashlib.sha256).digest())
+    if sys.version_info >= (3,0):
+      signature = signature.decode('utf-8')
     headers = {
-      'Authorization':'HMACAuth {}:{}'.format(self.API_KEY,signature),
+      'Authorization':'HMACAuth {0}:{1}'.format(self.API_KEY,signature),
       'Date':_date
       }
+    print ('headers', headers)
     return signature,_date,headers
     
 
@@ -201,7 +207,12 @@ class CanvasData(object):
     path = '/api/schema/latest'
     signature,_date,headers = self.buildRequest(path)
     url = 'https://api.inshosteddata.com{}'.format(path)
-    schema = requests.get(url,headers=headers).json()
+    schema_res = requests.get(url,headers=headers)
+    try:
+      schema = schema_res.json()
+    except:
+      print('schema error: ', schema_res.text)
+      schema = schema_res.text
     return schema
 
   @property
@@ -258,7 +269,8 @@ class CanvasData(object):
       logger.debug('converting {} to CSV'.format(tsv))
       of = csv.writer(open(outfile, 'w+'))
       of.writerow(headers)
-      with gzip.open(tsv) as f:
+      #with gzip.open(tsv,'xt') as f:
+      with gzip.open(tsv,'rt') as f:
         gz_csv = csv.reader(f,delimiter='\t')
         for v in gz_csv:
           of.writerow(v)
@@ -472,7 +484,11 @@ class CanvasData(object):
           field_value = None 
 
         if field_value != None and self.engine.name=='sqlite':
-          setattr(obj, c['name'], field_value.decode('utf8'))
+          if sys.version_info < (3,0):
+            setattr(obj, c['name'], field_value.decode('utf8'))
+          else:
+            setattr(obj, c['name'], field_value)
+
       elif c['type'] in ('bigint', 'int'):
         # Convert to proper integer value
         field_value = getattr(obj, c['name'], None)
@@ -551,7 +567,7 @@ class CanvasData(object):
       return
 
     records = []
-    for i, data in enumerate(csv.DictReader(open(csv_filename,'rb'))):
+    for i, data in enumerate(csv.DictReader(open(csv_filename,'r'))):
         
       obj = self.get_orm_obj(schema_table)
 
