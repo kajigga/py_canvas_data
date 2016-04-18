@@ -10,5 +10,3 @@ import sys
 
 __all__ = ['cli']
 
-if sys.version_info >= (3,0):
-  import cli

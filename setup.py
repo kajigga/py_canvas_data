@@ -87,7 +87,7 @@ setup(
     # pip to create the appropriate form of executable for the target platform.
     entry_points={
         'console_scripts': [
-          'canvasdata = canvas_data_utils:cli.canvasdata',
+          'canvasdata = canvas_data_utils.cli:canvasdata',
         ],
     },
 )
