@@ -6,4 +6,4 @@ Using the module programatically
   :members:
   :show-inheritance:
 '''
-import cli
+__all__ = ['cli']
