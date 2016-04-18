@@ -105,15 +105,13 @@ file. It should look something like the following example.
 
 ::
 
-  [security]
+  [config]
   API_SECRET = replace_with_api_secret_from_canvas_data
   API_KEY = replace_with_api_key_from_canvas_data
 
-  [folders]
   base_folder = /path/to/base/folder/for/downloads/
   data_folder = %(base_folder)s/test2
 
-  [database]
   connection_string = sqlite:///%(base_folder)s/sample.db
 
 
