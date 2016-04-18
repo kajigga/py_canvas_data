@@ -169,8 +169,6 @@ class TestCLI(TestCase):
     cmd1 = ['canvasdata','--config', self.config_filename,'-t','user', 'download']
     cmd2 = ['canvasdata','--config', self.config_filename,'-t','user', 'convert_to_csv']
 
-
-    print("DATA_BASE_DIR: " + self.db_dir)
     self.assertEqual(files_with_extension(self.cd.data_folder, 'csv'),[])
 
     script_output = subprocess.check_output(cmd1)  
