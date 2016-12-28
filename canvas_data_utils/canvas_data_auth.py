@@ -460,18 +460,18 @@ class CanvasData(object):
 
     def normalize_values_for_db(self, obj, schema_table):
         '''normalizes some of the data for the database. For example, many fields
-        come across with \\N representing a null value. This method changes that to
+        come across with \N representing a null value. This method changes that to
         `None` so it imports correctly into the database.
 
         This method also ensures that floats are floats, integers are integers,
         date fields have proper dates or are blank, etc. '''
 
-        date_fields = ('submitted_at', 'created_at', 'updated_at', 'graded_at')
-
         cols = self.table_columns(schema_table)
         for c in cols:
-            if c['type'] in ('date', 'datetime', 'timestamp'):
-                field_value = getattr(obj, c['name'], None)
+            field_value = getattr(obj, c['name'], None)
+            if field_value == '\N':
+                setattr(obj, c['name'], None)
+            elif c['type'] in ('date', 'datetime', 'timestamp'):
                 if field_value:
                     try:
                         new_date = dateutil.parser.parse(field_value)
@@ -479,13 +479,9 @@ class CanvasData(object):
                     except ValueError:
                         setattr(obj, c['name'], None)
             elif c['type'] == 'boolean':
-                field_value = getattr(obj, c['name'], None)
                 if field_value is not None:
                     setattr(obj, c['name'], field_value == 'true')
             elif c['type'] == 'text' or c['type'] == 'varchar':
-                field_value = getattr(obj, c['name'], None)
-                if field_value == '\\\\N':
-                    field_value = None
 
                 if field_value is not None and self.engine.name == 'sqlite':
                     if sys.version_info < (3, 0):
@@ -495,17 +491,13 @@ class CanvasData(object):
 
             elif c['type'] in ('bigint', 'int'):
                 # Convert to proper integer value
-                field_value = getattr(obj, c['name'], None)
                 try:
                     f = int(field_value)
                 except:
                     f = None
                 setattr(obj, c['name'], f)
             elif c['type'] == 'double precision':
-                # COnvert to proper float
-                field_value = getattr(obj, c['name'], None)
-                if field_value == '\\N':
-                    field_value = None
+                # Convert to proper float
                 try:
                     f = float(field_value)
                 except:
