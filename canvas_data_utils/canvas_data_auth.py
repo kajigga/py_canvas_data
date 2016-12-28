@@ -100,6 +100,7 @@ DIALECT_MAP = {
     'sqlite': sqlite
     }
 
+csv.field_size_limit(sys.maxsize)
 
 class CanvasData(object):
 
