@@ -341,7 +341,6 @@ class CanvasData(object):
             _iter = iter(self.schema['schema'].items())
 
         for key, schema_element in _iter:
-            if key != 'course_ui_canvas_navigation_dim':
                 table_names.append(key)
         return table_names
 
