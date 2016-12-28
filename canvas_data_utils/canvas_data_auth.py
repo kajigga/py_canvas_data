@@ -183,7 +183,7 @@ class CanvasData(object):
 
     def buildRequest(self, path, **kwargs):
         _date = datetime.utcnow().strftime('%a, %d %b %y %H:%M:%S GMT')
-        print('_date', _date)
+        logger.debug('_date: %s', _date)
         return self._buildRequest(path, _date, **kwargs)
 
     def build_schema_header(self, path, _date, **kwargs):
@@ -210,7 +210,7 @@ class CanvasData(object):
             'Authorization': 'HMACAuth {0}:{1}'.format(self.API_KEY, signature),
             'Date': _date
             }
-        print ('headers', headers)
+        logger.debug('headers: %s', headers)
         return signature, _date, headers
 
     def fetch_schema(self):
@@ -282,7 +282,7 @@ class CanvasData(object):
                 gz_csv = csv.reader(f, delimiter='\t')
                 for v in gz_csv:
                     of.writerow(v)
-            logger.debug('{} converted to'.format(tsv, outfile))
+            logger.debug('{} converted to {}'.format(tsv, outfile))
         return outfile
 
     def print_schema(self, schema=None, print_output=True):
@@ -319,12 +319,14 @@ class CanvasData(object):
                     headers.append(h['name'])
             except Exception as err:
                 # Must be a raw ResultProxy
+                logger.exception(err)
                 headers = query.keys()
 
         try:
             rows = query.all()
         except Exception as err:
             # Must be a raw ResultProxy
+            logger.exception()
             rows = query.fetchall()
 
         output.append(tabulate(rows, headers))
@@ -558,7 +560,7 @@ class CanvasData(object):
         '''imports the table specified by schema_table with the data from
         csv_filename.'''
         if self.file_imported(csv_filename):
-            logger.debug('{} not imported because it already in there'.format(schema_table))
+            logger.debug('{} not imported because it is already in there'.format(schema_table))
             return
 
         records = []
@@ -576,8 +578,8 @@ class CanvasData(object):
             self.imported_files.add(os.path.basename(csv_filename))
             logger.debug('{} records successfully imported into {}'.format(len(records), schema_table))
             self.save_imported_files()
-        except sqlalchemy.exc.IntegrityError as err:
-            pass
+        except sqlalchemy.exc.IntegrityError:
+            logger.exception()
 
     def import_data(self, schema_table=None, with_download=True):
         '''downloads and imports all tables unless schema_table is defined, in
