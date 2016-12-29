@@ -224,6 +224,8 @@ class CanvasData(object):
         except:
             print('schema error: ', schema_res.text)
             schema = schema_res.text
+
+        schema = self.fix_schema(schema)
         return schema
 
     @property
@@ -236,6 +238,20 @@ class CanvasData(object):
                 self._schema = self.fetch_schema()
                 json.dump(self._schema, open(schema_filename, 'w+'), indent=2, separators=(',', ': '))
         return self._schema
+
+    def fix_schema(self, schema):
+        # the schema returned by the API has errors that we want to fix before using it
+        # 1) fix the types of group_membership_dim.id and group_membership_dim.canvas_id
+        try:
+            gmd_cols = schema['schema']['group_membership_dim']['columns']
+            for col in gmd_cols:
+                if col['name'] in [u'id', u'canvas_id'] and col['type'] == u'varchar':
+                    col['type'] = u'bigint'
+                    col.pop('length', None)
+        except KeyError:
+            logger.error('Failed to clean up the group_membership_dim schema')
+
+        return schema
 
     def time_diff(self, last_updated):
         last_updated = datetime.fromtimestamp(last_updated)
