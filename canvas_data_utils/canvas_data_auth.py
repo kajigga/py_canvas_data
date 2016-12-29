@@ -15,7 +15,7 @@ import glob
 
 import sqlalchemy
 from sqlalchemy import create_engine
-from sqlalchemy import Table, Column, Integer, String, MetaData, Boolean, DATE, DATETIME, FLOAT, BigInteger, BIGINT, TIMESTAMP, TEXT, ForeignKey
+from sqlalchemy import Table, Column, Integer, String, MetaData, Boolean, DATE, DateTime, FLOAT, BigInteger, BIGINT, TIMESTAMP, TEXT, ForeignKey
 from sqlalchemy.dialects import postgresql, mysql, sqlite
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.automap import automap_base
@@ -82,13 +82,13 @@ COLUMN_TYPE_MAPPING = {
     'bigint': BIGINT,
     'boolean': Boolean,
     'date': DATE,
-    'datetime': DATETIME,
+    'datetime': DateTime,
     'double precision': FLOAT,
     'int': Integer,
     'integer': Integer,
     'text': TEXT(convert_unicode=True),
     'timestamp': TIMESTAMP,
-    'varchar': String(256, convert_unicode=True),
+    'varchar': String,
     'guid': String(256, convert_unicode=True),
     'enum': String(256, convert_unicode=True)
 }
@@ -410,6 +410,9 @@ class CanvasData(object):
                 for col in self.table_columns(schema_table):
                     col_num += 1
                     col_type = COLUMN_TYPE_MAPPING[col['type']]
+                    if col_type == String and col.get('length'):
+                        col_type = col_type(col['length'], convert_unicode=True)
+
                     column = Column(col['name'], col_type)
 
                     do_primary_key = False
