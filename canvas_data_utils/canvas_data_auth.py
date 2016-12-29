@@ -66,7 +66,7 @@ odd_table_mapping = {
     'conversation_dim': 'conversation',
     'conversation_message_dim': 'conversation_message',
     'conversation_message_participant_fact': 'conversation_message_participant',
-    }
+}
 
 # These tables don't have a field called "id"
 DIM_TABLES_WITHOUT_ID = ('assignment_rule_dim', 'assignment_group_rule_dim', 'conversation_message_participant')
@@ -101,6 +101,7 @@ DIALECT_MAP = {
     }
 
 csv.field_size_limit(sys.maxsize)
+
 
 class CanvasData(object):
 
@@ -343,7 +344,7 @@ class CanvasData(object):
             rows = query.all()
         except Exception as err:
             # Must be a raw ResultProxy
-            logger.exception()
+            logger.exception(err)
             rows = query.fetchall()
 
         output.append(tabulate(rows, headers))
@@ -357,7 +358,7 @@ class CanvasData(object):
             _iter = iter(self.schema['schema'].items())
 
         for key, schema_element in _iter:
-                table_names.append(key)
+            table_names.append(key)
         return table_names
 
     def table_columns(self, schema_table, **kwargs):
@@ -602,12 +603,12 @@ class CanvasData(object):
             logger.debug('{} records successfully imported into {}'.format(len(records), schema_table))
             self.save_imported_files()
         except sqlalchemy.exc.IntegrityError:
-            logger.exception()
+            logger.exception('Failed to load data from %s into %s', csv_filename, schema_table)
 
     def import_data(self, schema_table=None, with_download=True):
         '''downloads and imports all tables unless schema_table is defined, in
         which case it only imports that table'''
-        self.download_all_files()
+        self.download_all_files(table=schema_table)
         self.create_tables()
         for table in self.table_list():
             if not schema_table or table == schema_table:
