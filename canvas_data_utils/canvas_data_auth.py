@@ -252,6 +252,17 @@ class CanvasData(object):
         except KeyError:
             logger.error('Failed to clean up the group_membership_dim schema')
 
+        # 2) remove the foreign key constraint on some user_id columns; some records contain
+        #    references to users that don't seem to exist (anymore?)
+        try:
+            for table_name in ['wiki_page_fact', 'enrollment_dim']:
+                t_cols = schema['schema'][table_name]['columns']
+                for col in t_cols:
+                    if col['name'] == u'user_id':
+                        col.pop('dimension', None)
+        except KeyError:
+            logger.error('Failed to remove the {}.user_id FK constraint'.format(table_name))
+
         return schema
 
     def time_diff(self, last_updated):
