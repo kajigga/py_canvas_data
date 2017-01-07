@@ -433,9 +433,8 @@ class CanvasData(object):
                     comp_key = DIM_TABLES_WITH_COMPOSITE_KEY.get(schema_table, None)
                     if comp_key and col['name'] in comp_key['keys']:
                         do_primary_key = True
-                        if col['name'] != 'id':
-                            # only one column can have autoincrement
-                            autoincrement = False
+                        # autoincrement not compatible with composite keys
+                        autoincrement = False
 
                     elif col_num == 1 and col['name'] == 'id':
                         do_primary_key = True
