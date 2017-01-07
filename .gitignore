@@ -2,7 +2,7 @@
 *.pyc
 .cache/v/cache
 .tox
-CanvasData_Utilities.egg-info
+*.egg-info
 htmlcov
 *.swo
 *.db
@@ -11,5 +11,6 @@ doc/_build
 *.csv
 imported_files.json
 schema.json
-Python_Canvas_Data_Utilities.egg-info
 cdata_venv
+build
+dist
