@@ -505,7 +505,7 @@ class CanvasData(object):
         cols = self.table_columns(schema_table)
         for c in cols:
             field_value = getattr(obj, c['name'], None)
-            if field_value == '\N':
+            if field_value == r'\N':
                 setattr(obj, c['name'], None)
             elif c['type'] in ('date', 'datetime', 'timestamp'):
                 if field_value:
