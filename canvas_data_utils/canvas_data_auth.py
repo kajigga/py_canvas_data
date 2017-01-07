@@ -460,11 +460,11 @@ class CanvasData(object):
 
     def normalize_values_for_db(self, obj, schema_table):
         '''normalizes some of the data for the database. For example, many fields
-        come across with \N representing a null value. This method changes that to
+        come across with \\N representing a null value. This method changes that to
         `None` so it imports correctly into the database.
 
         This method also ensures that floats are floats, integers are integers,
-        date fields have proper dates or are blank, etc. '''
+        date fields have proper dates or are blank, etc.'''
 
         cols = self.table_columns(schema_table)
         for c in cols:
