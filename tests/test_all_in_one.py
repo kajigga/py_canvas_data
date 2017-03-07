@@ -56,8 +56,8 @@ class TestingCanvasData(TestCase):
         tlist = self.cd.table_list()
         tlist.sort()
         self.assertEqual(base_keys, tlist)
-        self.assertEqual(len(tlist), 56)
-        self.assertEqual(len(base_keys), 56)
+        self.assertEqual(len(tlist), 65)
+        self.assertEqual(len(base_keys), 65)
 
     def test_print_schema(self):
         output = self.cd.print_schema(print_output=False)
@@ -130,7 +130,6 @@ class TestReadConfig(TestCase):
         config, valid, errors = self.cd.config_valid(config_filename)
         self.assertFalse(valid)
         self.assertNotEquals([], errors)
-
 
 def files_with_extension(folder, *extensions):
     files = []

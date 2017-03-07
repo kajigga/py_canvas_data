@@ -15,7 +15,7 @@ import glob
 
 import sqlalchemy
 from sqlalchemy import create_engine
-from sqlalchemy import Table, Column, Integer, String, MetaData, Boolean, DATE, DATETIME, FLOAT, BigInteger, BIGINT, TIMESTAMP, TEXT, ForeignKey
+from sqlalchemy import Table, Column, Integer, String, MetaData, Boolean, DATE, DateTime, FLOAT, BigInteger, BIGINT, TIMESTAMP, TEXT, ForeignKey
 from sqlalchemy.dialects import postgresql, mysql, sqlite
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.automap import automap_base
@@ -66,7 +66,7 @@ odd_table_mapping = {
     'conversation_dim': 'conversation',
     'conversation_message_dim': 'conversation_message',
     'conversation_message_participant_fact': 'conversation_message_participant',
-    }
+}
 
 # These tables don't have a field called "id"
 DIM_TABLES_WITHOUT_ID = ('assignment_rule_dim', 'assignment_group_rule_dim', 'conversation_message_participant')
@@ -82,13 +82,13 @@ COLUMN_TYPE_MAPPING = {
     'bigint': BIGINT,
     'boolean': Boolean,
     'date': DATE,
-    'datetime': DATETIME,
+    'datetime': DateTime,
     'double precision': FLOAT,
     'int': Integer,
     'integer': Integer,
     'text': TEXT(convert_unicode=True),
     'timestamp': TIMESTAMP,
-    'varchar': String(256, convert_unicode=True),
+    'varchar': String,
     'guid': String(256, convert_unicode=True),
     'enum': String(256, convert_unicode=True)
 }
@@ -99,6 +99,8 @@ DIALECT_MAP = {
     'mysql': mysql,
     'sqlite': sqlite
     }
+
+csv.field_size_limit(sys.maxsize)
 
 
 class CanvasData(object):
@@ -183,7 +185,7 @@ class CanvasData(object):
 
     def buildRequest(self, path, **kwargs):
         _date = datetime.utcnow().strftime('%a, %d %b %y %H:%M:%S GMT')
-        print('_date', _date)
+        logger.debug('_date: %s', _date)
         return self._buildRequest(path, _date, **kwargs)
 
     def build_schema_header(self, path, _date, **kwargs):
@@ -210,7 +212,7 @@ class CanvasData(object):
             'Authorization': 'HMACAuth {0}:{1}'.format(self.API_KEY, signature),
             'Date': _date
             }
-        print ('headers', headers)
+        logger.debug('headers: %s', headers)
         return signature, _date, headers
 
     def fetch_schema(self):
@@ -223,6 +225,8 @@ class CanvasData(object):
         except:
             print('schema error: ', schema_res.text)
             schema = schema_res.text
+
+        schema = self.fix_schema(schema)
         return schema
 
     @property
@@ -235,6 +239,31 @@ class CanvasData(object):
                 self._schema = self.fetch_schema()
                 json.dump(self._schema, open(schema_filename, 'w+'), indent=2, separators=(',', ': '))
         return self._schema
+
+    def fix_schema(self, schema):
+        # the schema returned by the API has errors that we want to fix before using it
+        # 1) fix the types of group_membership_dim.id and group_membership_dim.canvas_id
+        try:
+            gmd_cols = schema['schema']['group_membership_dim']['columns']
+            for col in gmd_cols:
+                if col['name'] in [u'id', u'canvas_id'] and col['type'] == u'varchar':
+                    col['type'] = u'bigint'
+                    col.pop('length', None)
+        except KeyError:
+            logger.error('Failed to clean up the group_membership_dim schema')
+
+        # 2) remove the foreign key constraint on some user_id columns; some records contain
+        #    references to users that don't seem to exist (anymore?)
+        try:
+            for table_name in ['wiki_page_fact', 'enrollment_dim']:
+                t_cols = schema['schema'][table_name]['columns']
+                for col in t_cols:
+                    if col['name'] == u'user_id':
+                        col.pop('dimension', None)
+        except KeyError:
+            logger.error('Failed to remove the {}.user_id FK constraint'.format(table_name))
+
+        return schema
 
     def time_diff(self, last_updated):
         last_updated = datetime.fromtimestamp(last_updated)
@@ -282,7 +311,7 @@ class CanvasData(object):
                 gz_csv = csv.reader(f, delimiter='\t')
                 for v in gz_csv:
                     of.writerow(v)
-            logger.debug('{} converted to'.format(tsv, outfile))
+            logger.debug('{} converted to {}'.format(tsv, outfile))
         return outfile
 
     def print_schema(self, schema=None, print_output=True):
@@ -319,12 +348,14 @@ class CanvasData(object):
                     headers.append(h['name'])
             except Exception as err:
                 # Must be a raw ResultProxy
+                logger.exception(err)
                 headers = query.keys()
 
         try:
             rows = query.all()
         except Exception as err:
             # Must be a raw ResultProxy
+            logger.exception(err)
             rows = query.fetchall()
 
         output.append(tabulate(rows, headers))
@@ -338,8 +369,7 @@ class CanvasData(object):
             _iter = iter(self.schema['schema'].items())
 
         for key, schema_element in _iter:
-            if key != 'course_ui_canvas_navigation_dim':
-                table_names.append(key)
+            table_names.append(key)
         return table_names
 
     def table_columns(self, schema_table, **kwargs):
@@ -392,6 +422,9 @@ class CanvasData(object):
                 for col in self.table_columns(schema_table):
                     col_num += 1
                     col_type = COLUMN_TYPE_MAPPING[col['type']]
+                    if col_type == String and col.get('length'):
+                        col_type = col_type(col['length'], convert_unicode=True)
+
                     column = Column(col['name'], col_type)
 
                     do_primary_key = False
@@ -400,6 +433,9 @@ class CanvasData(object):
                     comp_key = DIM_TABLES_WITH_COMPOSITE_KEY.get(schema_table, None)
                     if comp_key and col['name'] in comp_key['keys']:
                         do_primary_key = True
+                        # autoincrement not compatible with composite keys
+                        autoincrement = False
+
                     elif col_num == 1 and col['name'] == 'id':
                         do_primary_key = True
                         if schema_table == 'requests':
@@ -464,14 +500,14 @@ class CanvasData(object):
         `None` so it imports correctly into the database.
 
         This method also ensures that floats are floats, integers are integers,
-        date fields have proper dates or are blank, etc. '''
-
-        date_fields = ('submitted_at', 'created_at', 'updated_at', 'graded_at')
+        date fields have proper dates or are blank, etc.'''
 
         cols = self.table_columns(schema_table)
         for c in cols:
-            if c['type'] in ('date', 'datetime', 'timestamp'):
-                field_value = getattr(obj, c['name'], None)
+            field_value = getattr(obj, c['name'], None)
+            if field_value == r'\N':
+                setattr(obj, c['name'], None)
+            elif c['type'] in ('date', 'datetime', 'timestamp'):
                 if field_value:
                     try:
                         new_date = dateutil.parser.parse(field_value)
@@ -479,13 +515,9 @@ class CanvasData(object):
                     except ValueError:
                         setattr(obj, c['name'], None)
             elif c['type'] == 'boolean':
-                field_value = getattr(obj, c['name'], None)
                 if field_value is not None:
                     setattr(obj, c['name'], field_value == 'true')
             elif c['type'] == 'text' or c['type'] == 'varchar':
-                field_value = getattr(obj, c['name'], None)
-                if field_value == '\\\\N':
-                    field_value = None
 
                 if field_value is not None and self.engine.name == 'sqlite':
                     if sys.version_info < (3, 0):
@@ -495,17 +527,13 @@ class CanvasData(object):
 
             elif c['type'] in ('bigint', 'int'):
                 # Convert to proper integer value
-                field_value = getattr(obj, c['name'], None)
                 try:
                     f = int(field_value)
                 except:
                     f = None
                 setattr(obj, c['name'], f)
             elif c['type'] == 'double precision':
-                # COnvert to proper float
-                field_value = getattr(obj, c['name'], None)
-                if field_value == '\\N':
-                    field_value = None
+                # Convert to proper float
                 try:
                     f = float(field_value)
                 except:
@@ -566,7 +594,7 @@ class CanvasData(object):
         '''imports the table specified by schema_table with the data from
         csv_filename.'''
         if self.file_imported(csv_filename):
-            logger.debug('{} not imported because it already in there'.format(schema_table))
+            logger.debug('{} not imported because it is already in there'.format(schema_table))
             return
 
         records = []
@@ -584,13 +612,13 @@ class CanvasData(object):
             self.imported_files.add(os.path.basename(csv_filename))
             logger.debug('{} records successfully imported into {}'.format(len(records), schema_table))
             self.save_imported_files()
-        except sqlalchemy.exc.IntegrityError as err:
-            pass
+        except sqlalchemy.exc.IntegrityError:
+            logger.exception('Failed to load data from %s into %s', csv_filename, schema_table)
 
     def import_data(self, schema_table=None, with_download=True):
         '''downloads and imports all tables unless schema_table is defined, in
         which case it only imports that table'''
-        self.download_all_files()
+        self.download_all_files(table=schema_table)
         self.create_tables()
         for table in self.table_list():
             if not schema_table or table == schema_table:
